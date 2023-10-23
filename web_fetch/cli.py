@@ -10,8 +10,11 @@ async def write_to_file(filename: str, text: str) -> None:
     """
     Write text to a file asynchronously.
     """
-    async with aiofiles.open(filename, "w") as f:
-        await f.write(text)
+    try:
+        async with aiofiles.open(filename, "w") as f:
+            await f.write(text)
+    except Exception as e:
+        raise RuntimeError(f"Failed to write to {filename}: {e}") from e
 
 async def fetch(url: str, session: aiohttp.ClientSession) -> tuple[str, str]:
     """
@@ -46,6 +49,22 @@ def dir_path(path: str) -> str:
 
     return path
 
+async def fetch_urls(urls: list[str], output_path: str) -> None:
+    """
+    Fetch a list of URLs and write the responses to files.
+
+    :param urls: URLs to fetch
+    :param output_path: path to folder to write files into
+    """
+    async with aiohttp.ClientSession() as session:
+        fetch_tasks = [fetch(url, session) for url in urls]
+        for response in asyncio.as_completed(fetch_tasks):
+            try:
+                response, host = await response
+                await write_to_file(f"{output_path}/{host}.html", response)
+            except RuntimeError as e:
+                print(e)
+
 async def cli():
     """
     Main CLI entrypoint.
@@ -55,16 +74,7 @@ async def cli():
     parser.add_argument("--output", "-o", help="Output folder", default="/tmp", type=dir_path)
     args = parser.parse_args()
 
-    async with aiohttp.ClientSession() as session:
-        fetch_tasks = [fetch(url, session) for url in args.urls]
-        for response in asyncio.as_completed(fetch_tasks):
-            try:
-                response, host = await response
-                print(response[:100], "...")
-                output_path = args.output
-                await write_to_file(f"{output_path}/{host}.html", response)
-            except RuntimeError as e:
-                print(e)
+    await fetch_urls(args.urls, args.output)
 
 
 def main():
