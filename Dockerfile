@@ -3,4 +3,4 @@ WORKDIR /code
 RUN pip install poetry
 COPY . /code
 RUN poetry install --no-dev
-CMD ["poetry", "run", "web-fetch"]
+ENTRYPOINT ["poetry", "run", "web-fetch"]
