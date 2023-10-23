@@ -19,3 +19,8 @@ To build and run the Docker container manually:
 docker build . -t web-fetch
 docker run web-fetch [urls]
 ```
+
+## Development Time
+
+- 0.5 hours, repository setup and Docker build and push
+- 1 hour, URL fetch and save to disk, plus basic HTML parsing
