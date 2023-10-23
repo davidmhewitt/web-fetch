@@ -7,33 +7,25 @@ Python application to fetch and save web pages. Currently supports saving the HT
 Could be further extended to support downloading other assets locally, such as CSS and JavaScript files.
 
 Arguments:
-- `--metadata`: Print JSON output to the console with information about the number of images and links on the page
+- `--metadata`: Print JSON output with information about the number of images and links on the page
 - `--output`: Save the downloaded files to the specified directory
-
-## Requirements
-
-Tested with Python 3.11, but some earlier Python 3 versions should work. Poetry is used for dependency management. To install the dependencies, run:
-
-```
-poetry install
-```
 
 ## Usage 
 
 The included Dockerfile is built and published to GHCR using a GitHub action, so the application can be run with:
-```
+```sh
 docker run ghcr.io/davidmhewitt/web-fetch:main [urls]
 ```
 
 For example:
 
-```
+```sh
 docker run ghcr.io/davidmhewitt/web-fetch:main --metadata https://www.google.com http://github.com
 ```
 
-By default, the downloaded files are saved to the /tmp directory, so they will be within the container. To create a volume that the container can save the downloaded files into so they are accessible on the host, run the container with the `-v` flag. For example:
+By default, the downloaded files are saved to the `/tmp` directory, so they will be within the container. To create a volume that the container can save the downloaded files into so they are accessible on the host, run the container with the `-v` flag. For example:
 
-```
+```sh
 docker run -v ${PWD}/output:/output ghcr.io/davidmhewitt/web-fetch:main -o /output --metadata https://www.google.com http://github.com
 ```
 
@@ -41,9 +33,23 @@ Downloaded files will be saved to the `output` directory on the host. The usual 
 
 To build and run the Docker container manually:
 
-```
+```sh
 docker build . -t web-fetch
 docker run web-fetch [urls]
+```
+
+## Dev Environment Setup
+(only applicable if you want to run the application locally)
+
+Tested with Python 3.11, but some earlier Python 3 versions should work. Poetry is used for dependency management. To install the dependencies, run:
+
+```
+poetry install
+```
+
+To run the application, run:
+```
+poetry run web-fetch [urls]
 ```
 
 ## Development Time
