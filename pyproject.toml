@@ -10,6 +10,7 @@ packages = [{include = "web_fetch"}]
 python = "^3.11"
 aiohttp = "^3.8.6"
 aiofiles = "^23.2.1"
+beautifulsoup4 = "^4.12.2"
 
 [tool.poetry.scripts]
 web-fetch = "web_fetch.cli:main"

@@ -4,6 +4,26 @@ import os
 
 import aiohttp
 import aiofiles
+from bs4 import BeautifulSoup
+
+class HTMLParser:
+    """
+    HTML parser using BeautifulSoup to return information about fetched pages
+    """
+    def __init__(self, html: str) -> None:
+        self.parsed = BeautifulSoup(html, "html.parser")
+
+    def get_links(self) -> list[str]:
+        """
+        Return a list of links in the HTML.
+        """
+        return [link["href"] for link in self.parsed.find_all("a")]
+    
+    def get_images(self) -> list[str]:
+        """
+        Return a list of images in the HTML.
+        """
+        return [image["src"] for image in self.parsed.find_all("img")]
 
 
 async def write_to_file(filename: str, text: str) -> None:
