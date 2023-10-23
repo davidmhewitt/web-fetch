@@ -1,8 +1,10 @@
 import argparse
 import asyncio
+import dataclasses
+import json
+import os
 from dataclasses import dataclass
 from datetime import datetime
-import os
 
 from web_fetch.fetcher import fetch_urls
 
@@ -46,7 +48,7 @@ async def cli():
         metadata = [Metadata(len(result.links), len(result.images), result.host)
                     for result in results]
 
-        print(metadata)
+        print(json.dumps([dataclasses.asdict(m) for m in metadata], indent=2))
 
 
 def main():
