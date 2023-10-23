@@ -4,10 +4,13 @@ version = "0.1.0"
 description = ""
 authors = ["David Hewitt <davidmhewitt@gmail.com>"]
 readme = "README.md"
+packages = [{include = "web_fetch"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
 
+[tool.poetry.scripts]
+web-fetch = "web_fetch.cli:cli"
 
 [build-system]
 requires = ["poetry-core"]
