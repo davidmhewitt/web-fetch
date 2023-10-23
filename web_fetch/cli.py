@@ -1,8 +1,18 @@
 import argparse
 import asyncio
+from dataclasses import dataclass
+from datetime import datetime
 import os
 
 from web_fetch.fetcher import fetch_urls
+
+
+@dataclass
+class Metadata:
+    num_links: int
+    num_images: int
+    host: str
+    time_fetched: str = datetime.now().isoformat()
 
 
 def dir_path(path: str) -> str:
@@ -31,7 +41,12 @@ async def cli():
         "--metadata", "-m", help="Display metadata for each url fetched", action="store_true")
     args = parser.parse_args()
 
-    await fetch_urls(args.urls, args.output, args.metadata)
+    results = await fetch_urls(args.urls, args.output)
+    if args.metadata:
+        metadata = [Metadata(len(result.links), len(result.images), result.host)
+                    for result in results]
+
+        print(metadata)
 
 
 def main():
