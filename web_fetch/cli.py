@@ -2,28 +2,9 @@ import argparse
 import asyncio
 import os
 
-import aiohttp
 import aiofiles
-from bs4 import BeautifulSoup
-
-class HTMLParser:
-    """
-    HTML parser using BeautifulSoup to return information about fetched pages
-    """
-    def __init__(self, html: str) -> None:
-        self.parsed = BeautifulSoup(html, "html.parser")
-
-    def get_links(self) -> list[str]:
-        """
-        Return a list of links in the HTML.
-        """
-        return [link["href"] for link in self.parsed.find_all("a")]
-    
-    def get_images(self) -> list[str]:
-        """
-        Return a list of images in the HTML.
-        """
-        return [image["src"] for image in self.parsed.find_all("img")]
+import aiohttp
+from web_fetch.html_parser import HTMLParser
 
 
 async def write_to_file(filename: str, text: str) -> None:
@@ -81,6 +62,10 @@ async def fetch_urls(urls: list[str], output_path: str) -> None:
         for response in asyncio.as_completed(fetch_tasks):
             try:
                 response, host = await response
+                parser = HTMLParser(response)
+                links = parser.get_links()
+                images = parser.get_images()
+                print(f"Found {len(links)} links and {len(images)} images on {host}")
                 await write_to_file(f"{output_path}/{host}.html", response)
             except RuntimeError as e:
                 print(e)
